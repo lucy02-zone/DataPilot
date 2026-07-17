@@ -1,11 +1,5 @@
 import pandas as pd
-from openai import OpenAI
-
-from app.core.config import settings
-
-client = OpenAI(
-    api_key=settings.OPENAI_API_KEY
-)
+import ollama
 
 
 def load_dataset(file_path):
@@ -47,25 +41,29 @@ Dataset Shape:
 
 Sample Data:
 {df.head(10).to_string()}
+
+Summary Statistics:
+{df.describe(include='all').fillna('').to_string()}
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
+    response = ollama.chat(
+        model="gemma3:4b",
         messages=[
             {
                 "role": "system",
-                "content":
-                "You are an expert data analyst."
+                "content": """
+You are an expert data analyst.
+Analyze the dataset and answer the user's question clearly.
+"""
             },
             {
                 "role": "user",
-                "content":
-                f"{context}\n\nQuestion: {question}"
+                "content": f"{context}\n\nQuestion: {question}"
             }
         ]
     )
 
     return {
         "question": question,
-        "answer": response.choices[0].message.content
+        "answer": response["message"]["content"]
     }
