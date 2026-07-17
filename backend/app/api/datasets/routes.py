@@ -23,7 +23,7 @@ from app.services.chat_service import (
     ask_dataset_question
 )
 from app.services.insights_service import generate_insights
-
+from app.services.report_service import create_report
 router = APIRouter(
     prefix="/api/datasets",
     tags=["Datasets"]
@@ -211,5 +211,27 @@ def dataset_insights(
         )
 
     return generate_insights(
+        dataset.file_path
+    )
+@router.get("/report/{dataset_id}")
+def generate_report(
+    dataset_id: int,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found"
+        )
+
+    return create_report(
+        dataset_id,
         dataset.file_path
     )
