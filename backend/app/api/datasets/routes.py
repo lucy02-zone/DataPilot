@@ -22,6 +22,7 @@ from app.schemas.chat import ChatRequest
 from app.services.chat_service import (
     ask_dataset_question
 )
+from app.services.insights_service import generate_insights
 
 router = APIRouter(
     prefix="/api/datasets",
@@ -190,4 +191,25 @@ def dataset_chat(
     return ask_dataset_question(
         dataset.file_path,
         payload.question
+    )
+@router.get("/insights/{dataset_id}")
+def dataset_insights(
+    dataset_id: int,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found"
+        )
+
+    return generate_insights(
+        dataset.file_path
     )
