@@ -12,6 +12,11 @@ from app.models.dataset import Dataset
 from app.services.dataset_service import save_dataset
 from app.services.preview_service import get_dataset_preview
 from app.services.eda_service import generate_eda
+from app.services.chart_service import (
+    create_histogram,
+    create_scatter,
+    create_boxplot
+)
 
 router = APIRouter(
     prefix="/api/datasets",
@@ -86,4 +91,76 @@ def dataset_eda(
 
     return generate_eda(
         dataset.file_path
+    )
+@router.get("/chart/histogram/{dataset_id}/{column}")
+def histogram_chart(
+    dataset_id: int,
+    column: str,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        return {
+            "error": "Dataset not found"
+        }
+
+    return create_histogram(
+        dataset.file_path,
+        column
+    )
+@router.get(
+    "/chart/scatter/{dataset_id}/{x_column}/{y_column}"
+)
+def scatter_chart(
+    dataset_id: int,
+    x_column: str,
+    y_column: str,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        return {
+            "error": "Dataset not found"
+        }
+
+    return create_scatter(
+        dataset.file_path,
+        x_column,
+        y_column
+    )
+@router.get(
+    "/chart/boxplot/{dataset_id}/{column}"
+)
+def boxplot_chart(
+    dataset_id: int,
+    column: str,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        return {
+            "error": "Dataset not found"
+        }
+
+    return create_boxplot(
+        dataset.file_path,
+        column
     )
