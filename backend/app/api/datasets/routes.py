@@ -17,6 +17,11 @@ from app.services.chart_service import (
     create_scatter,
     create_boxplot
 )
+from app.schemas.chat import ChatRequest
+
+from app.services.chat_service import (
+    ask_dataset_question
+)
 
 router = APIRouter(
     prefix="/api/datasets",
@@ -163,4 +168,26 @@ def boxplot_chart(
     return create_boxplot(
         dataset.file_path,
         column
+    )
+@router.post("/chat/{dataset_id}")
+def dataset_chat(
+    dataset_id: int,
+    payload: ChatRequest,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        return {
+            "error": "Dataset not found"
+        }
+
+    return ask_dataset_question(
+        dataset.file_path,
+        payload.question
     )
