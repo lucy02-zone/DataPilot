@@ -7,6 +7,7 @@ import UploadDataset from "./pages/UploadDataset";
 import Reports from "./pages/Reports";
 import DatasetDetail from "./pages/DatasetDetail";
 import Forecast from "./pages/Forecast";
+import Chat from "./pages/Chat";
 
 function App() {
   return (
@@ -37,6 +38,11 @@ function App() {
         <Route
           path="/reports"
           element={<Reports />}
+        />
+
+        <Route
+          path="/chat"
+          element={<Chat />}
         />
 
         <Route

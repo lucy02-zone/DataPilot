@@ -10,7 +10,7 @@ function Sidebar() {
 
       <Link to="/upload">Upload Dataset</Link>
 
-      <Link to="/history">Dataset History</Link>
+      <Link to="/chat">Dataset Chat</Link>
 
       <Link to="/forecast">Forecasting</Link>
 
