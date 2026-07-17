@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from fastapi import UploadFile
 from fastapi import File
 from fastapi import Depends
-
+from app.services.preview_service import get_dataset_preview
+from app.models.dataset import Dataset
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -31,7 +32,25 @@ def upload_dataset(
         filename=file.filename,
         user_id=1
     )
+@router.get("/preview/{dataset_id}")
+def preview_dataset(
+    dataset_id: int,
+    db: Session = Depends(get_db)
+):
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
 
+    if not dataset:
+        return {
+            "error": "Dataset not found"
+        }
+
+    return get_dataset_preview(
+        dataset.file_path
+    )
     return {
         "dataset_id": dataset.id,
         "rows": dataset.rows_count,
