@@ -1,49 +1,22 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import OverviewCards from "../components/OverviewCards";
 
 function Dashboard() {
 
-  const [dashboard, setDashboard] = useState(null);
-
-  useEffect(() => {
-
-    api
-      .get("/datasets/dashboard/6")
-      .then((response) => {
-        setDashboard(response.data);
-      });
-
-  }, []);
-
-  if (!dashboard)
-    return <h2>Loading...</h2>;
-
   return (
 
-    <div>
+    <div className="layout">
 
-      <h1>DataPilot Dashboard</h1>
+      <Sidebar />
 
-      <h3>
-        Rows:
-        {dashboard.overview.rows}
-      </h3>
+      <div className="content">
 
-      <h3>
-        Columns:
-        {dashboard.overview.columns}
-      </h3>
+        <Navbar />
 
-      <h3>
-        Health Score:
-        {dashboard.overview.health_score}
-      </h3>
+        <OverviewCards />
 
-      <h2>AI Insights</h2>
-
-      <pre>
-        {dashboard.insights.ai_insights}
-      </pre>
+      </div>
 
     </div>
 

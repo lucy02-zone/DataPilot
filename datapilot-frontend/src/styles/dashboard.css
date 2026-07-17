@@ -1,0 +1,46 @@
+body{
+  margin:0;
+  font-family:Arial;
+}
+
+.layout{
+  display:flex;
+}
+
+.sidebar{
+  width:250px;
+  height:100vh;
+  background:#1e293b;
+  color:white;
+  padding:20px;
+}
+
+.sidebar a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  margin:15px 0;
+}
+
+.content{
+  flex:1;
+}
+
+.navbar{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+.cards{
+  display:flex;
+  gap:20px;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  width:220px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
