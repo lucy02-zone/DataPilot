@@ -30,7 +30,8 @@ def calculate_health_score(df):
 
 def build_dashboard(
     dataset_id,
-    file_path
+    file_path,
+    dataset_name=None
 ):
 
     preview = get_dataset_preview(
@@ -70,6 +71,8 @@ def build_dashboard(
     return {
 
         "dataset_id": dataset_id,
+
+        "dataset_name": dataset_name or "Latest Dataset",
 
         "overview": {
 

@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import UploadDataset from "./pages/UploadDataset";
+import Reports from "./pages/Reports";
 import DatasetDetail from "./pages/DatasetDetail";
 import Forecast from "./pages/Forecast";
 
@@ -31,6 +32,11 @@ function App() {
         <Route
           path="/upload"
           element={<UploadDataset />}
+        />
+
+        <Route
+          path="/reports"
+          element={<Reports />}
         />
 
         <Route

@@ -1,7 +1,11 @@
+import os
+
 from fastapi import APIRouter
 from fastapi import UploadFile
 from fastapi import File
 from fastapi import Depends
+from fastapi import HTTPException
+from fastapi.responses import FileResponse
 
 from sqlalchemy.orm import Session
 
@@ -58,6 +62,28 @@ def upload_dataset(
     }
 
 
+@router.get("/")
+def list_datasets(
+    db: Session = Depends(get_db)
+):
+
+    datasets = (
+        db.query(Dataset)
+        .order_by(Dataset.id.desc())
+        .all()
+    )
+
+    return [
+        {
+            "dataset_id": dataset.id,
+            "dataset_name": dataset.name,
+            "rows": dataset.rows_count,
+            "columns": dataset.columns_count
+        }
+        for dataset in datasets
+    ]
+
+
 @router.get("/preview/{dataset_id}")
 def preview_dataset(
     dataset_id: int,
@@ -77,6 +103,29 @@ def preview_dataset(
 
     return get_dataset_preview(
         dataset.file_path
+    )
+
+
+@router.get("/dashboard/latest")
+def latest_dashboard(
+    db: Session = Depends(get_db)
+):
+    dataset = (
+        db.query(Dataset)
+        .order_by(Dataset.id.desc())
+        .first()
+    )
+
+    if not dataset:
+        raise HTTPException(
+            status_code=404,
+            detail="No datasets found"
+        )
+
+    return build_dashboard(
+        dataset.id,
+        dataset.file_path,
+        dataset.name
     )
 
 
@@ -233,9 +282,23 @@ def generate_report(
             detail="Dataset not found"
         )
 
-    return create_report(
+    report = create_report(
         dataset_id,
         dataset.file_path
+    )
+
+    report_path = report.get("report_path")
+
+    if not report_path or not os.path.exists(report_path):
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to generate report"
+        )
+
+    return FileResponse(
+        path=report_path,
+        media_type="application/pdf",
+        filename=os.path.basename(report_path)
     )
 @router.get("/forecast/{dataset_id}")
 def forecast_dataset(
