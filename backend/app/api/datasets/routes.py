@@ -24,6 +24,7 @@ from app.services.chat_service import (
 )
 from app.services.insights_service import generate_insights
 from app.services.report_service import create_report
+from app.services.forecasting_service import generate_forecast
 router = APIRouter(
     prefix="/api/datasets",
     tags=["Datasets"]
@@ -234,4 +235,31 @@ def generate_report(
     return create_report(
         dataset_id,
         dataset.file_path
+    )
+@router.get("/forecast/{dataset_id}")
+def forecast_dataset(
+    dataset_id: int,
+    date_column: str,
+    target_column: str,
+    periods: int = 30,
+    db: Session = Depends(get_db)
+):
+
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id)
+        .first()
+    )
+
+    if not dataset:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found"
+        )
+
+    return generate_forecast(
+        dataset.file_path,
+        date_column,
+        target_column,
+        periods
     )
