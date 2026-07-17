@@ -10,7 +10,6 @@ def create_user(
     email: str,
     password: str
 ):
-
     user = User(
         username=username,
         email=email,
